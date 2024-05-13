@@ -8,13 +8,14 @@ interface LinkDialogProps {
 	selectedNode: LinkNode | null;
 	isOpen: boolean;
 	onDialogClose: React.ReactEventHandler;
-	onSaveHandler: (node: LinkNode) => void;
+	onSaveHandler: (node: Partial<LinkNode>) => void;
 	isEditing?: boolean;
 }
 
 export const LinkDialog: React.FC<LinkDialogProps> = (props: LinkDialogProps) => {
 	const { isOpen: isDialogOpen, onDialogClose, selectedNode, onSaveHandler } = props;
 	const { isNew, setIsNew } = React.useContext(StoreContext);
+	console.log(isNew);
 	const [isEditing, setIsEditing] = React.useState<boolean>(false);
 
 	const onEditClick: React.MouseEventHandler<HTMLButtonElement> = (_e: React.MouseEvent) => {
@@ -43,7 +44,13 @@ export const LinkDialog: React.FC<LinkDialogProps> = (props: LinkDialogProps) =>
 		>
 			<div className="modalContent-container">
 				{isNew || isEditing ? (
-					<EditForm selectedNode={selectedNode} onSaveHandler={onSaveHandler} />
+					<EditForm
+						selectedNode={selectedNode}
+						onSaveHandler={(e, node) => {
+							onSaveHandler(node);
+							onDialogClose(e);
+						}}
+					/>
 				) : selectedNode ? (
 					<LinkViewer selectedNode={selectedNode} editBtnHandler={onEditClick} />
 				) : null}
@@ -73,7 +80,7 @@ const LinkViewer: React.FC<{ selectedNode: LinkNode; editBtnHandler: React.Mouse
 };
 
 interface EditFormProps {
-	onSaveHandler: (node: LinkNode) => void;
+	onSaveHandler: (e: React.MouseEvent, node: Partial<LinkNode>) => void;
 	selectedNode: LinkNode | null;
 }
 
@@ -88,17 +95,16 @@ const EditForm: React.FC<EditFormProps> = ({ onSaveHandler, selectedNode }) => {
 		setContent(selectedNode?.content ?? '');
 	}, [selectedNode]);
 
-	const saveHandler: React.MouseEventHandler<HTMLButtonElement> = (_e: React.MouseEvent) => {
-		const node: LinkNode = {
+	const saveHandler: React.MouseEventHandler<HTMLButtonElement> = (e: React.MouseEvent) => {
+		const node: Partial<LinkNode> = {
 			...selectedNode,
-			id: selectedNode?.id ?? 'some-random-id',
 			created: selectedNode?.created ?? new Date(),
 			lastUpdated: new Date(),
 			title: title ?? '',
 			description: description ?? '',
 			content: content ?? '',
 		};
-		onSaveHandler(node);
+		onSaveHandler(e, node);
 	};
 
 	return (

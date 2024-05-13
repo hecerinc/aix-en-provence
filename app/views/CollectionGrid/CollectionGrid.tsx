@@ -3,6 +3,7 @@ import * as React from 'react';
 import { LinkCollection } from '~/components/LinkCollection/LinkCollection';
 import { LinkDialog } from '~/components/LinkDialog/LinkDialog';
 import type { LinkNode } from '~/models/index.types';
+import { v4 as uuidv4 } from 'uuid';
 // const = {};
 
 import { fakeData } from '~/data';
@@ -27,6 +28,17 @@ export const CollectionGrid: React.FC<CollectionGridProps> = (props: CollectionG
 		// navigate("/");
 	};
 
+	const saveNodeHandler = (node: Partial<LinkNode>) => {
+		if (node.id) {
+			// is not new
+			const index = fakeData.findIndex((t) => t.id === node.id)!;
+			fakeData.splice(index, 1, node as LinkNode);
+		} else {
+			node.id = uuidv4();
+			fakeData.push(node as LinkNode);
+		}
+	};
+
 	return (
 		<>
 			<section className={'collectionGrid'}>
@@ -45,7 +57,7 @@ export const CollectionGrid: React.FC<CollectionGridProps> = (props: CollectionG
 				isOpen={isDialogOpen}
 				selectedNode={selectedNode}
 				onDialogClose={closeModal}
-				onSaveHandler={(node) => {}}
+				onSaveHandler={saveNodeHandler}
 			/>
 		</>
 	);
