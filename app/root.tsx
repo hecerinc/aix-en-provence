@@ -1,4 +1,14 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import type { LinksFunction } from '@remix-run/node';
+
+import appStylesHref from './root.css?url';
+
+export const links: LinksFunction = () => {
+	return [
+		{ rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css' },
+		{ rel: 'stylesheet', href: appStylesHref },
+	];
+};
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
@@ -10,8 +20,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				{children}
-				<ScrollRestoration />
+				<main className="container">{children}</main>
 				<Scripts />
 			</body>
 		</html>
