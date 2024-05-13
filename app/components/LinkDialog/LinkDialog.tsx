@@ -2,6 +2,7 @@ import * as React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { LinkNode } from '~/models/index.types';
+import { Form } from '@remix-run/react';
 import { StoreContext } from '~/routes/_index';
 
 interface LinkDialogProps {
@@ -15,7 +16,6 @@ interface LinkDialogProps {
 export const LinkDialog: React.FC<LinkDialogProps> = (props: LinkDialogProps) => {
 	const { isOpen: isDialogOpen, onDialogClose, selectedNode, onSaveHandler } = props;
 	const { isNew, setIsNew } = React.useContext(StoreContext);
-	console.log(isNew);
 	const [isEditing, setIsEditing] = React.useState<boolean>(false);
 
 	const onEditClick: React.MouseEventHandler<HTMLButtonElement> = (_e: React.MouseEvent) => {
@@ -108,21 +108,19 @@ const EditForm: React.FC<EditFormProps> = ({ onSaveHandler, selectedNode }) => {
 	};
 
 	return (
-		<form>
+		<Form method="post">
 			<fieldset>
 				<div className="space-between header">
 					<input
 						type="text"
-						name="nodeTitle"
+						name="title"
 						className="nodeTitle"
 						value={title}
 						onChange={(e) => {
 							setTitle(e.target.value);
 						}}
 					/>
-					<button type="button" onClick={saveHandler}>
-						Save
-					</button>
+					<button type="submit">Save</button>
 				</div>
 				<input
 					type="text"
@@ -135,7 +133,7 @@ const EditForm: React.FC<EditFormProps> = ({ onSaveHandler, selectedNode }) => {
 				/>
 				<textarea
 					id="modalBody-ta"
-					name="modalBody-ta"
+					name="content"
 					className="modalBody-ta"
 					value={content}
 					onChange={(e) => {
@@ -143,6 +141,6 @@ const EditForm: React.FC<EditFormProps> = ({ onSaveHandler, selectedNode }) => {
 					}}
 				></textarea>
 			</fieldset>
-		</form>
+		</Form>
 	);
 };
