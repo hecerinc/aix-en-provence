@@ -90,6 +90,9 @@ const EditForm = ({ onSaveHandler, selectedNode }: EditFormProps) => {
 	const [content, setContent] = React.useState<string | undefined>(selectedNode?.content);
 	const fetcher = useFetcher();
 
+	const isEdit: boolean = selectedNode?.id !== null && selectedNode?.id !== undefined;
+	const formAction = isEdit ? '/edit' : '/';
+
 	React.useEffect(() => {
 		setTitle(selectedNode?.title ?? '');
 		setDescription(selectedNode?.description ?? '');
@@ -109,7 +112,7 @@ const EditForm = ({ onSaveHandler, selectedNode }: EditFormProps) => {
 	};
 
 	return (
-		<fetcher.Form method="post" action="/">
+		<fetcher.Form method="post" action={formAction}>
 			<fieldset>
 				<div className="space-between header">
 					<input
@@ -123,6 +126,7 @@ const EditForm = ({ onSaveHandler, selectedNode }: EditFormProps) => {
 					/>
 					<button type="submit">Save</button>
 				</div>
+				{isEdit ? <input type="hidden" name="nodeId" value={selectedNode!.id} /> : null}
 				<input
 					type="text"
 					name="description"
