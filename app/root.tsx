@@ -17,7 +17,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 	const formData = await request.formData();
 	const data = Object.fromEntries(formData) as unknown as LinkNodeMutation;
 	const collection = await createLinkCollection(data);
-	return json({ collection });
+	return json({ collection, success: true });
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {

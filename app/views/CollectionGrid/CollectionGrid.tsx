@@ -25,8 +25,6 @@ export const CollectionGrid: React.FC<CollectionGridProps> = (props: CollectionG
 		// navigate("/");
 	};
 
-	const saveNodeHandler = async (node: Partial<LinkNode>) => {};
-
 	return (
 		<>
 			<section className={'collectionGrid'}>
@@ -41,12 +39,7 @@ export const CollectionGrid: React.FC<CollectionGridProps> = (props: CollectionG
 					</div>
 				))}
 			</section>
-			<LinkDialog
-				isOpen={isDialogOpen}
-				selectedNode={selectedNode}
-				onDialogClose={closeModal}
-				onSaveHandler={saveNodeHandler}
-			/>
+			<LinkDialog isOpen={isDialogOpen} selectedNode={selectedNode} onDialogClose={closeModal} />
 		</>
 	);
 };

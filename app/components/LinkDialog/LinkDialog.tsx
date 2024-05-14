@@ -2,25 +2,31 @@ import * as React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { LinkNode } from '~/models/index.types';
-import { Form, useFetcher } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import { StoreContext } from '~/routes/_index';
 
 interface LinkDialogProps {
 	selectedNode: LinkNode | null;
 	isOpen: boolean;
 	onDialogClose: React.ReactEventHandler;
-	onSaveHandler: (node: Partial<LinkNode>) => void;
 	isEditing?: boolean;
 }
 
 export const LinkDialog: React.FC<LinkDialogProps> = (props: LinkDialogProps) => {
-	const { isOpen: isDialogOpen, onDialogClose, selectedNode, onSaveHandler } = props;
+	const { isOpen: isDialogOpen, onDialogClose, selectedNode } = props;
 	const { isNew, setIsNew } = React.useContext(StoreContext);
 	const [isEditing, setIsEditing] = React.useState<boolean>(false);
+
+	const fetcher = useFetcher();
 
 	const onEditClick: React.MouseEventHandler<HTMLButtonElement> = (_e: React.MouseEvent) => {
 		setIsEditing(true);
 	};
+	React.useEffect(() => {
+		if (fetcher?.data?.success) {
+			onDialogClose(null);
+		}
+	}, [fetcher.data]);
 
 	React.useEffect(() => {
 		if (!isDialogOpen) {
@@ -44,13 +50,7 @@ export const LinkDialog: React.FC<LinkDialogProps> = (props: LinkDialogProps) =>
 		>
 			<div className="modalContent-container">
 				{isNew || isEditing ? (
-					<EditForm
-						selectedNode={selectedNode}
-						onSaveHandler={(e, node) => {
-							onSaveHandler(node);
-							onDialogClose(e);
-						}}
-					/>
+					<EditForm fetcher={fetcher} selectedNode={selectedNode} />
 				) : selectedNode ? (
 					<LinkViewer selectedNode={selectedNode} editBtnHandler={onEditClick} />
 				) : null}
@@ -80,15 +80,14 @@ const LinkViewer: React.FC<{ selectedNode: LinkNode; editBtnHandler: React.Mouse
 };
 
 interface EditFormProps {
-	onSaveHandler: (e: React.MouseEvent, node: Partial<LinkNode>) => void;
 	selectedNode: LinkNode | null;
+	fetcher: any;
 }
 
-const EditForm = ({ onSaveHandler, selectedNode }: EditFormProps) => {
+const EditForm = ({ selectedNode, fetcher }: EditFormProps) => {
 	const [title, setTitle] = React.useState<string | undefined>(selectedNode?.title);
 	const [description, setDescription] = React.useState<string | undefined>(selectedNode?.description);
 	const [content, setContent] = React.useState<string | undefined>(selectedNode?.content);
-	const fetcher = useFetcher();
 
 	const isEdit: boolean = selectedNode?.id !== null && selectedNode?.id !== undefined;
 	const formAction = isEdit ? '/edit' : '/';
@@ -98,18 +97,6 @@ const EditForm = ({ onSaveHandler, selectedNode }: EditFormProps) => {
 		setDescription(selectedNode?.description ?? '');
 		setContent(selectedNode?.content ?? '');
 	}, [selectedNode]);
-
-	const saveHandler: React.MouseEventHandler<HTMLButtonElement> = (e: React.MouseEvent) => {
-		const node: Partial<LinkNode> = {
-			...selectedNode,
-			created: selectedNode?.created ?? new Date(),
-			lastUpdated: new Date(),
-			title: title ?? '',
-			description: description ?? '',
-			content: content ?? '',
-		};
-		onSaveHandler(e, node);
-	};
 
 	return (
 		<fetcher.Form method="post" action={formAction}>

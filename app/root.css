@@ -30,16 +30,14 @@ main.container {
 .collectionGrid {
 	display: flex;
 	gap: 20px;
+	flex-wrap: wrap;
 	article {
 		height: 100%;
 	}
 }
 .gridItem {
-	width: 400px;
+	width: 340px;
 	height: 300px;
-	&.firstItem {
-		width: 300px;
-	}
 }
 .modalBody-ta {
 	width: 100%;
