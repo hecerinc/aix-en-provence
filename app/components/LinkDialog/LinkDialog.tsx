@@ -2,7 +2,7 @@ import * as React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { LinkNode } from '~/models/index.types';
-import { Form } from '@remix-run/react';
+import { Form, useFetcher } from '@remix-run/react';
 import { StoreContext } from '~/routes/_index';
 
 interface LinkDialogProps {
@@ -84,10 +84,11 @@ interface EditFormProps {
 	selectedNode: LinkNode | null;
 }
 
-const EditForm: React.FC<EditFormProps> = ({ onSaveHandler, selectedNode }) => {
+const EditForm = ({ onSaveHandler, selectedNode }: EditFormProps) => {
 	const [title, setTitle] = React.useState<string | undefined>(selectedNode?.title);
 	const [description, setDescription] = React.useState<string | undefined>(selectedNode?.description);
 	const [content, setContent] = React.useState<string | undefined>(selectedNode?.content);
+	const fetcher = useFetcher();
 
 	React.useEffect(() => {
 		setTitle(selectedNode?.title ?? '');
@@ -108,7 +109,7 @@ const EditForm: React.FC<EditFormProps> = ({ onSaveHandler, selectedNode }) => {
 	};
 
 	return (
-		<Form method="post">
+		<fetcher.Form method="post" action="/">
 			<fieldset>
 				<div className="space-between header">
 					<input
@@ -141,6 +142,6 @@ const EditForm: React.FC<EditFormProps> = ({ onSaveHandler, selectedNode }) => {
 					}}
 				></textarea>
 			</fieldset>
-		</Form>
+		</fetcher.Form>
 	);
 };

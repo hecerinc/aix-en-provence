@@ -1,9 +1,8 @@
 import * as React from 'react';
 import type { MetaFunction } from '@remix-run/node';
-import { json, ActionFunctionArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
 
-import type { LinkNodeMutation } from '../data';
-import { createLinkCollection, getLinkCollections } from '../data';
+import { getLinkCollections } from '../data';
 import { LinkNode } from '~/models/index.types';
 
 import { CollectionGrid } from '~/views/CollectionGrid/CollectionGrid';
@@ -14,13 +13,6 @@ export const meta: MetaFunction = () => {
 };
 
 export const StoreContext = React.createContext({ isNew: false, setIsNew: (_v: boolean) => {} });
-
-export const action = async ({ params, request }: ActionFunctionArgs) => {
-	const formData = await request.formData();
-	const data = Object.fromEntries(formData) as unknown as LinkNodeMutation;
-	const collection = await createLinkCollection(data);
-	return json({ collection });
-};
 
 export const loader = async () => {
 	const linkCollections = await getLinkCollections();

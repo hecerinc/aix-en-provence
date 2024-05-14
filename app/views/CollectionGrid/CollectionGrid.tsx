@@ -4,8 +4,6 @@ import { LinkCollection } from '~/components/LinkCollection/LinkCollection';
 import { LinkDialog } from '~/components/LinkDialog/LinkDialog';
 import type { LinkNode } from '~/models/index.types';
 
-import { fakeData } from '~/data';
-
 interface CollectionGridProps {
 	isDialogOpen: boolean;
 	setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
